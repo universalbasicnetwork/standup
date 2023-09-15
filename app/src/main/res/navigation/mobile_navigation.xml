@@ -12,6 +12,13 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/nav_youtube"
+        android:name="com.jaybobzin.standup.app.ui.youtube.YoutubeFragment"
+        android:label="Youtube"
+
+        tools:layout="@layout/fragment_youtube" />
+
+    <fragment
         android:id="@+id/nav_gallery"
         android:name="com.jaybobzin.standup.app.ui.gallery.GalleryFragment"
         android:label="@string/menu_gallery"

@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.BundleCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.api.client.extensions.android.http.AndroidHttp
@@ -33,6 +34,9 @@ import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.YouTubeScopes
 import com.google.api.services.youtube.model.Channel
 import com.jaybobzin.standup.app.MainActivity
+import com.jaybobzin.standup.app.databinding.FragmentSlideshowBinding
+import com.jaybobzin.standup.app.databinding.FragmentYoutubeBinding
+import com.jaybobzin.standup.app.ui.gallery.GalleryViewModel
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.IOException
@@ -44,6 +48,8 @@ const val REQUEST_GOOGLE_PLAY_SERVICES = 1002
 const val REQUEST_PERMISSION_GET_ACCOUNTS = 1003
 
 class YoutubeFragment : Fragment() {
+
+    private var _binding : FragmentYoutubeBinding? = null
 
     private val BUTTON_TEXT = "Call YouTube Data API"
     private val PREF_ACCOUNT_NAME = "accountName"
@@ -69,7 +75,12 @@ class YoutubeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        val viewModel =
+            ViewModelProvider(this).get(YoutubeViewModel::class.java)
+
+        _binding = FragmentYoutubeBinding.inflate(inflater, container, false)
+
         val activityLayout = LinearLayout(context)
         val lp = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -85,24 +96,22 @@ class YoutubeFragment : Fragment() {
         )
 
         val mCallApiButton = Button(context)
-        mCallApiButton.setText(BUTTON_TEXT)
+        mCallApiButton.text = BUTTON_TEXT
         mCallApiButton.setOnClickListener(View.OnClickListener {
-            this.mCallApiButton?.setEnabled(false)
-            this.mOutputText?.setText("")
+            this.mCallApiButton?.isEnabled = false
+            this.mOutputText?.text = ""
             getResultsFromApi()
-            this.mCallApiButton?.setEnabled(true)
+            this.mCallApiButton?.isEnabled = true
         })
         activityLayout.addView(mCallApiButton)
         this.mCallApiButton = mCallApiButton
 
         val mOutputText = TextView(context)
-        mOutputText.setLayoutParams(tlp)
+        mOutputText.layoutParams = tlp
         mOutputText.setPadding(16, 16, 16, 16)
-        mOutputText.setVerticalScrollBarEnabled(true)
-        mOutputText.setMovementMethod(ScrollingMovementMethod())
-        mOutputText.setText(
-            "Click the \'$BUTTON_TEXT\' button to test the API."
-        )
+        mOutputText.isVerticalScrollBarEnabled = true
+        mOutputText.movementMethod = ScrollingMovementMethod()
+        mOutputText.text = "Click the \'$BUTTON_TEXT\' button to test the API."
         this.mOutputText = mOutputText
         activityLayout.addView(mOutputText)
 
@@ -129,7 +138,7 @@ class YoutubeFragment : Fragment() {
         } else if (cred == null || cred.selectedAccountName == null) {
             chooseAccount()
         } else if (!isDeviceOnline()) {
-            mOutputText?.setText("No network connection available.")
+            mOutputText?.text = "No network connection available."
         } else {
             MakeRequestTask(cred, this).execute()
         }
@@ -191,10 +200,8 @@ class YoutubeFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_GOOGLE_PLAY_SERVICES -> if (resultCode != AppCompatActivity.RESULT_OK) {
-                mOutputText?.setText(
-                    "This app requires Google Play Services. Please install " +
-                            "Google Play Services on your device and relaunch this app."
-                )
+                mOutputText?.text = "This app requires Google Play Services. Please install " +
+                        "Google Play Services on your device and relaunch this app."
             } else {
                 getResultsFromApi()
             }
@@ -337,11 +344,11 @@ class YoutubeFragment : Fragment() {
                 if (channels != null) {
                     val channel: Channel = channels[0]
                     channelInfo.add(
-                        ((("This channel's ID is " + channel.getId()).toString() + ". " +
-                                "Its title is '" + channel.getSnippet()
-                            .getTitle()).toString() + ", " +
-                                "and it has " + channel.getStatistics()
-                            .getViewCount()).toString() + " views."
+                        ((("This channel's ID is " + channel.id).toString() + ". " +
+                                "Its title is '" + channel.snippet
+                            .title).toString() + ", " +
+                                "and it has " + channel.statistics
+                            .viewCount).toString() + " views."
                     )
                 }
                 return channelInfo
@@ -349,26 +356,26 @@ class YoutubeFragment : Fragment() {
 
 
         override fun onPreExecute() {
-            fragment.mOutputText?.setText("")
+            fragment.mOutputText?.text = ""
             fragment.mProgress?.show()
         }
 
         override fun onPostExecute(output: List<String?>?) {
-            fragment?.mProgress?.hide()
+            fragment.mProgress?.hide()
             if (output == null || output.size == 0) {
-                fragment?.mOutputText?.setText("No results returned.")
+                fragment.mOutputText?.text = "No results returned."
             } else {
                 val mutable = output.toMutableList()
                 mutable.add(0, "Data retrieved using the YouTube Data API:")
-                fragment?.mOutputText?.setText(TextUtils.join("\n", mutable))
+                fragment.mOutputText?.text = TextUtils.join("\n", mutable)
             }
         }
 
         override fun onCancelled() {
-            fragment?.mProgress?.hide()
+            fragment.mProgress?.hide()
             if (mLastError != null) {
                 if (mLastError is GooglePlayServicesAvailabilityIOException) {
-                    fragment?.showGooglePlayServicesAvailabilityErrorDialog(
+                    fragment.showGooglePlayServicesAvailabilityErrorDialog(
                         (mLastError as GooglePlayServicesAvailabilityIOException)
                             .connectionStatusCode
                     )
@@ -378,13 +385,11 @@ class YoutubeFragment : Fragment() {
                         REQUEST_AUTHORIZATION, Bundle.EMPTY
                     )
                 } else {
-                    fragment.mOutputText?.setText(
-                        ("The following error occurred:\n"
-                                + mLastError!!.message)
-                    )
+                    fragment.mOutputText?.text = ("The following error occurred:\n"
+                            + mLastError!!.message)
                 }
             } else {
-                fragment?.mOutputText?.setText("Request cancelled.")
+                fragment.mOutputText?.text = "Request cancelled."
             }
         }
     }

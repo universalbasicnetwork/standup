@@ -54,8 +54,10 @@ dependencies {
 
     implementation("com.google.api-client:google-api-client-android:1.22.0") {
         exclude("org.apache.httpcomponents")
+        exclude("com.google.guava","guava-jdk5")
     }
     implementation("com.google.apis:google-api-services-youtube:v3-rev183-1.22.0") {
         exclude("org.apache.httpcomponents")
+        exclude("com.google.guava","guava-jdk5")
     }
 }
