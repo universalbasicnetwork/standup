@@ -8,10 +8,12 @@ espresso-core = "3.5.1"
 appcompat = "1.6.1"
 material = "1.8.0"
 constraintlayout = "2.1.4"
+easy-perm = "3.0.0"
 lifecycle-livedata-ktx = "2.6.1"
 lifecycle-viewmodel-ktx = "2.6.1"
 navigation-fragment-ktx = "2.5.3"
 navigation-ui-ktx = "2.5.3"
+play-services = "20.7.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -21,10 +23,12 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+easyperm = {group = "pub.devrel", name="easypermissions", version.ref = "easy-perm"}
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle-livedata-ktx" }
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle-viewmodel-ktx" }
 navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation-fragment-ktx" }
 navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
+playservices = {group = "com.google.android.gms", name ="play-services-auth", version.ref = "play-services"}
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
